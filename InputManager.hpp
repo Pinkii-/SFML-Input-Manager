@@ -7,4 +7,6 @@ private:
 public:
 	void bind(std::string s, sf::Keyboard::Key);
 	bool action(std::string);
-}
+};
+
+#endif // INPUTMANAGER_HPP

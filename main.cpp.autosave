@@ -12,6 +12,20 @@ int main() {
 	InputManager::bind("attack", sf::Keyboard::A);
 
 	while(window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            switch (event) {
+            case sf::Event::Closed:
+                window.close();
+                break;
+            case sf::Event::KeyPressed:
+                InputManager::update(event.key,true);
+                break;
+                case sf
+            default:
+                break;
+            }
+        }
 
 		InputManager::update();
 

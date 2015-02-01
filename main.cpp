@@ -10,7 +10,8 @@ int main() {
 
 	InputManager::bind("walk", sf::Keyboard::W);
 	InputManager::bind("attack", sf::Keyboard::A);
-    InputManager::bind("walk",sf::Keyboard::S);
+    InputManager::bind("walk",sf::Keyboard::S); // Rebinding walk
+    InputManager::bind("attack",sf::Mouse::Right);
 
 	while(window.isOpen()) {
         sf::Event event;

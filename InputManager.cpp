@@ -3,7 +3,8 @@
 std::map<std::string, InputManager::helper> InputManager::keyboardBinds;
 
 void InputManager::bind(std::string s, sf::Keyboard::Key k) {
-    keyboardBinds.insert(std::make_pair(s,helper(k,false)));
+    if (keyboardBinds.find(s) == keyboardBinds.end()) keyboardBinds.insert(std::make_pair(s,helper(k,false)));
+    else keyboardBinds.at(s) = helper(k,false);
 }
 
 bool InputManager::isBinded(std::string s) {
@@ -17,5 +18,7 @@ bool InputManager::action(std::string s) {
 }
 
 void InputManager::update() {
-
+    for (auto& kb : keyboardBinds) {
+        kb.second.b = sf::Keyboard::isKeyPressed(kb.second.k);
+    }
 }

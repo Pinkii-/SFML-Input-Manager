@@ -26,6 +26,7 @@
 *.exe
 *.out
 *.app
-test.pro.user
+
+# QMake
 test.pro.user
 Makefile

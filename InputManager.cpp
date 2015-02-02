@@ -1,47 +1,60 @@
 #include "InputManager.hpp"
 
-std::map<std::string, InputManager::helperK> InputManager::keyboardBinds;
-std::map<std::string, InputManager::helperM> InputManager::mouseBinds;
-std::map<std::string, InputManager::helperJA> InputManager::joystickAxisBinds;
+std::map<int, InputManager::helperK> InputManager::keyboardBinds;
+std::map<int, InputManager::helperM> InputManager::mouseBinds;
+std::map<int, InputManager::helperJA> InputManager::joystickAxisBinds;
+std::map<int, InputManager::helperJB> InputManager::joystickButtonBinds;
 
-void InputManager::bind(std::string s, sf::Keyboard::Key k) {
+void InputManager::bind(int s, sf::Keyboard::Key k) {
     if (keyboardBinds.find(s) == keyboardBinds.end()) keyboardBinds.insert(std::make_pair(s,helperK(k)));
     else keyboardBinds.at(s) = helperK(k);
 }
 
-void InputManager::bind(std::string s, sf::Mouse::Button m) {
+void InputManager::bind(int s, sf::Mouse::Button m) {
     if (mouseBinds.find(s) == mouseBinds.end()) mouseBinds.insert(std::make_pair(s,helperM(m)));
     else mouseBinds.at(s) = helperM(m);
 }
 
-void InputManager::bind(std::string s, sf::Joystick::Axis ja, int nPad) {
+void InputManager::bind(int s, int nPad, sf::Joystick::Axis ja) {
     if (joystickAxisBinds.find(s) == joystickAxisBinds.end()) joystickAxisBinds.insert(std::make_pair(s,helperJA(ja,nPad)));
     else joystickAxisBinds.at(s) = helperJA(ja, nPad);
 }
 
-bool InputManager::isBinded(std::string s) {
-    return (keyboardBinds.find(s) != keyboardBinds.end()) || (mouseBinds.find(s) != mouseBinds.end() || joystickAxisBinds.find(s) != joystickAxisBinds.end());
+void InputManager::bind(int s, int nPad, int nButton) {
+    if (joystickButtonBinds.find(s) == joystickButtonBinds.end()) joystickButtonBinds.insert(std::make_pair(s,helperJB(nPad,nButton)));
+    else joystickButtonBinds.at(s) = helperJB(nPad,nButton);
 }
 
-bool InputManager::isKeyboardBinded(std::string s) {
+bool InputManager::isBinded(int s) {
+    return (keyboardBinds.find(s) != keyboardBinds.end())
+            || (mouseBinds.find(s) != mouseBinds.end()
+            || joystickAxisBinds.find(s) != joystickAxisBinds.end()
+            || joystickButtonBinds.find(s) != joystickButtonBinds.end());
+}
+
+bool InputManager::isKeyboardBinded(int s) {
     return (keyboardBinds.find(s) != keyboardBinds.end());
 }
 
-bool InputManager::isMouseBinded(std::string s) {
+bool InputManager::isMouseBinded(int s) {
     return (mouseBinds.find(s) != mouseBinds.end());
 }
 
-bool InputManager::isJoystickBinded(std::string s) {
-    return (joystickAxisBinds.find(s) != joystickAxisBinds.end());
+bool InputManager::isJoystickBinded(int s) {
+    return (joystickAxisBinds.find(s) != joystickAxisBinds.end() || joystickButtonBinds.find(s) != joystickButtonBinds.end());
 }
 
-int InputManager::action(std::string s) {
+int InputManager::action(int s) {
     auto itK = keyboardBinds.find(s);
     auto itM = mouseBinds.find(s);
     auto itJA = joystickAxisBinds.find(s);
-    if (itK == keyboardBinds.end() && itM == mouseBinds.end() && itJA == joystickAxisBinds.end()) return 0;
+    auto itJB = joystickButtonBinds.find(s);
+    if (itK == keyboardBinds.end()
+            && itM == mouseBinds.end()
+            && itJA == joystickAxisBinds.end()
+            && itJB == joystickButtonBinds.end()) return 0;
     else {
-        int aux[] = {(*itK).second.b, (*itM).second.b, (*itJA).second.pos};
+        int aux[] = {(*itK).second.b, (*itM).second.b, (*itJA).second.pos, (*itJB).second.b};
         return *std::max_element(aux,aux+3);
     }
 }
@@ -55,5 +68,8 @@ void InputManager::update() {
     }
     for (auto& jas : joystickAxisBinds) {
         jas.second.pos = sf::Joystick::getAxisPosition(jas.second.nPad,jas.second.j);
+    }
+    for (auto& jbs : joystickButtonBinds) {
+        jbs.second.b = sf::Joystick::isButtonPressed(jbs.second.nPad,jbs.second.nButton);
     }
 }

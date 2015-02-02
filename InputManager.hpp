@@ -32,19 +32,31 @@ private:
             this->nPad = nPad;
         }
     };
+    struct helperJB {
+        bool b;
+        int nPad;
+        int nButton;
+        helperJB(int nPad, int nButton) {
+            this->b = false;
+            this->nPad = nPad;
+            this->nButton = nButton;
+        }
+    };
 
-    static std::map<std::string, helperK> keyboardBinds;
-    static std::map<std::string, helperM> mouseBinds;
-    static std::map<std::string, helperJA> joystickAxisBinds;
+    static std::map<int, helperK> keyboardBinds;
+    static std::map<int, helperM> mouseBinds;
+    static std::map<int, helperJA> joystickAxisBinds;
+    static std::map<int, helperJB> joystickButtonBinds;
 public:
-    static void bind(std::string s, sf::Keyboard::Key k);
-    static void bind(std::string s, sf::Mouse::Button m);
-    static void bind(std::string s, sf::Joystick::Axis ja, int nPad);
-    static bool isBinded(std::string s);
-    static bool isKeyboardBinded(std::string s);
-    static bool isMouseBinded(std::string s);
-    static bool isJoystickBinded(std::string s);
-    static int action(std::string s);
+    static void bind(int s, sf::Keyboard::Key k);
+    static void bind(int s, sf::Mouse::Button m);
+    static void bind(int s, int nPad, sf::Joystick::Axis ja);
+    static void bind(int s, int nPad, int nButton);
+    static bool isBinded(int s);
+    static bool isKeyboardBinded(int s);
+    static bool isMouseBinded(int s);
+    static bool isJoystickBinded(int s);
+    static int action(int s);
     static void update();
 };
 

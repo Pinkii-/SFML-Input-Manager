@@ -46,16 +46,19 @@ bool InputManager::isJoystickBinded(int s) {
 
 int InputManager::action(int s) {
     auto itK = keyboardBinds.find(s);
-    auto itM = mouseBinds.find(s);
-    auto itJA = joystickAxisBinds.find(s);
-    auto itJB = joystickButtonBinds.find(s);
-    if (itK == keyboardBinds.end()
-            && itM == mouseBinds.end()
-            && itJA == joystickAxisBinds.end()
-            && itJB == joystickButtonBinds.end()) return 0;
+    if (itK != keyboardBinds.end() && (*itK).second.b) return true;
     else {
-        int aux[] = {(*itK).second.b, (*itM).second.b, (*itJA).second.pos, (*itJB).second.b};
-        return *std::max_element(aux,aux+3);
+        auto itM = mouseBinds.find(s);
+        if (itM != mouseBinds.end() && (*itM).second.b) return true;
+        else {
+            auto itJA = joystickAxisBinds.find(s);
+            if (itJA != joystickAxisBinds.end() && (*itJA).second.pos) return (*itJA).second.pos;
+            else {
+                auto itJB = joystickButtonBinds.find(s);
+                if (itJB != joystickButtonBinds.end()) return (*itJB).second.b;
+                else return false;
+            }
+        }
     }
 }
 
